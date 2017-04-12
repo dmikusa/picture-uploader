@@ -42,17 +42,27 @@
       </nav>
 
       <div class="container" role="main">
-          <div class="well">
-              <p>Click the button to select the files that you would like to upload.  Photo / Video uploader accepts the following formats: jpeg, mov, mp4.</p>
-              <input id="uploads" type="file" multiple />
-              <button id="uploadsBtn" type="button" class="btn btn-lg btn-primary">Upload Files</button>
-          </div>
-          <div class="row">
-              <div class="col-xs-12 col-md-12">
-                  Total Upload Size: <span id="total">0 bytes</span>
+          <div class="well row">
+              <div class="col-xs-6 col-md-6">
+                  <h3>First</h3>
+                  <p>Click the button to select the files that you would like to upload.  Photo / Video uploader accepts the following formats: jpeg, mov, mp4.</p>
+                  <input id="uploads" type="file" multiple />
+                  <button id="uploadsBtn" type="button" class="btn btn-lg btn-primary">Select Files</button>
+              </div>
+              <div class="col-xs-6 col-md-6">
+                  <h3>Second</h3>
+                  <p>Click the button to upload your files to the server.</p>
+                  <button id="doUpload" type="button" class="btn btn-lg btn-default">Upload Files</button>
               </div>
           </div>
-          <div id="previews" class="row">
+          <div class="panel panel-default row">
+              <div class="panel-heading">
+                  <span>Total Upload Size: <span id="total">0 bytes</span><button id="clear" type="button" class="btn btn-xs btn-default">Clear</button></span>
+                  <h3 class="panel-title">Uploads</h3>
+              </div>
+              <div id="previews" class="panel-body">
+                  <h4>No items selected</h4>
+              </div>
           </div>
       </div> <!-- /container -->
 
@@ -62,8 +72,10 @@
       <script src="index.js"></script>
       <script>
           jQuery(document).ready(
-              function() { uploader.setup($('#uploads'),
-                                          $('#uploadsBtn'))})
+              function() {
+                  totalSizeManager.setup($('#total'))
+                  uploader.setup($('#previews'), $('#uploads'), $('#uploadsBtn'), $('#clear'))
+              })
       </script>
   </body>
 </html>

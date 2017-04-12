@@ -6,3 +6,29 @@ body {
 input#uploads {
     display: none;
 }
+
+#previews > h4 {
+    text-align: center;
+}
+
+#previews > div > h5 {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+#previews > div > span:first-child {
+    float: right;
+    margin-right: 0.5em;
+}
+
+.thumbnail > img {
+    height: 200px;
+}
+
+.panel-heading > span {
+    float: right;
+}
+
+.panel-heading > span > button {
+    margin-left: 2em;
+}

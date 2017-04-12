@@ -1,48 +1,89 @@
 /* global jQuery, FileReader */
-var uploader = (function () {
-  var prettyPrintBytes = function (bytes) {
+
+var prettyPrinter = (function () {
+  var bytes = function (bytes) {
     var abvrs = ['B', 'KiB', 'MiB', 'GiB', 'TiB']
     var count = 0
-    while (bytes > 1024.0) {
-      bytes = bytes / 1024.0
-    }
+    for (count = 0; bytes > 1024.0; count++, bytes = bytes / 1024.0);
     return bytes.toFixed(3) + abvrs[count]
   }
 
+  return {
+    bytes: bytes
+  }
+}())
+
+var totalSizeManager = (function () {
+  var totalBytes = 0
+  var node = null
+
+  var update = function () {
+    node.text(prettyPrinter.bytes(totalBytes))
+  }
+
+  var reset = function () {
+    totalBytes = 0
+    update()
+  }
+
+  var increment = function (bytes) {
+    totalBytes += bytes
+    update()
+  }
+
+  var setup = function (dom) {
+    node = dom
+    reset()
+  }
+
+  return {
+    setup: setup,
+    reset: reset,
+    increment: increment
+  }
+}(jQuery))
+
+var uploader = (function () {
+  var previews = null
+
   var handleFiles = function (e) {
     var files = e.currentTarget.files
-    var previews = jQuery('#previews')
-    var totalBytes = 0
+
+    // remove no items selected h4
+    jQuery('h4', previews).remove()
+
     for (var i = 0; i < files.length; i++) {
       var f = files[i]
-      totalBytes += f.size
+      totalSizeManager.increment(f.size)
 
       var div = jQuery('<div></div>', {
         'class': 'col-xs-2 col-sm-3 col-md-4'
-      }).text('Selected File { name: ' + f.name + ', size: ' + prettyPrintBytes(f.size) + ', type: ' + (f.type || '<none>') + '}').appendTo(previews)
+      })
+      .append('<span>' + prettyPrinter.bytes(f.size) + '</span>')
+      .append('<h5>' + f.name + '</h5>')
+      .appendTo(previews)
 
       if (/^image\//.test(f.type)) {
-        // this could also be done with Object URLs
-        //   https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications#Example_Using_object_URLs_to_display_images
-        var img = jQuery('<img/>', {
-          'class': 'previewImg',
-          'style': 'height: 2em'
-        }).appendTo(div)
-
-        var reader = new FileReader()
-        reader.onload = (function (imgTag) {
-          return function (e) {
-            imgTag.src = e.target.result
-          }
-        })(img[0]) // this is because we're in a loop and we need to capture each img tag, if we don't include the wraper function we'll get the last item in the list always because of the way closure works
-        reader.readAsDataURL(f)
+        var span = jQuery('<span/>', {'class': 'thumbnail'}).appendTo(div)
+        if (f.size < 2097152) {
+          var img = jQuery('<img></img>').appendTo(span)
+          var reader = new FileReader()
+          reader.onload = (function (imgTag) {
+            return function (e) {
+              imgTag.src = e.target.result
+            }
+          })(img[0])
+          reader.readAsDataURL(f)
+        } else {
+          jQuery('<img src="too-large.png" />').appendTo(span)
+        }
       }
     }
-
-    jQuery('#total').text(prettyPrintBytes(totalBytes))
   }
 
-  var setup = function (formButton, fancyButton) {
+  var setup = function (previewsPanel, formButton, fancyButton, clearButton) {
+    previews = previewsPanel
+
     fancyButton.click(function (e) {
       if (formButton) {
         formButton.click()
@@ -51,6 +92,12 @@ var uploader = (function () {
     })
 
     formButton.change(handleFiles)
+
+    clearButton.click(function (e) {
+      previews.children().remove()
+      totalSizeManager.reset()
+      jQuery('<h4>No items selected</h4>').appendTo(previews)
+    })
   }
 
   return {
