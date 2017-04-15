@@ -123,7 +123,7 @@ var uploader = (function () {
             })
 
             req.upload.addEventListener('progress', function (e) {
-              pb.updateProg(e.lengthComputable)
+              pb.updateProg((e.loaded / e.total) * 100)
             })
 
             req.addEventListener('readystatechange', function (e) {
