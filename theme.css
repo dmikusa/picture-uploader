@@ -37,9 +37,9 @@ input#uploads {
     margin-left: 2em;
 }
 
-.progress {
+.progress, .alert-danger {
     width: 80%;
-    top: 45%;
+    top: 35%;
     left: 10%;
     position: absolute;
 }
