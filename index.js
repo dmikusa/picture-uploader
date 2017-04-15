@@ -98,8 +98,9 @@ var uploader = (function () {
     jQuery('#previews > div').map(function (i, thumbnail) {
       return jQuery(thumbnail)
     }).each(function (i, thumbnail) {
+      var file = thumbnail[0].file
       var form = new FormData()
-      form.append('file', jQuery('span > img', thumbnail)[0].file)
+      form.append('file', file)
 
       var pb = uploadProgBar.buildProgBar(thumbnail)
 
@@ -172,11 +173,13 @@ var uploaderSelector = (function () {
       .append('<h5>' + f.name + '</h5>')
       .appendTo(previews)
 
+      div[0].file = f
+
       if (/^image\//.test(f.type)) {
         var span = jQuery('<span/>', {'class': 'thumbnail'}).appendTo(div)
+        var img = jQuery('<img></img>')
+        img.appendTo(span)
         if (f.size < 2097152) {
-          var img = jQuery('<img></img>').appendTo(span)
-          img[0].file = f
           var reader = new FileReader()
           reader.onload = (function (imgTag) {
             return function (e) {
@@ -185,7 +188,7 @@ var uploaderSelector = (function () {
           })(img[0])
           reader.readAsDataURL(f)
         } else {
-          jQuery('<img src="too-large.png" />').appendTo(span)
+          img.attr('src', 'too-large.png')
         }
       }
     }
