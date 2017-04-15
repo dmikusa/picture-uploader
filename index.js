@@ -133,7 +133,7 @@ var uploader = (function () {
                 } else {
                   totalSizeManager.decrement(file.size)
                   pb.deactivate()
-                  thumbnail.remove()
+                  thumbnail.fadeOut(500, function () { jQuery(this).remove() })
                 }
               }
             })
