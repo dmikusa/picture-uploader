@@ -34,14 +34,14 @@
           </div>
           <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
+              <li class="active"><a id="homeLink" href="#">Home</a></li>
+              <li><a id="aboutLink" href="#">About</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </nav>
 
-      <div class="container" role="main">
+      <div id="home" class="container" role="main">
           <div class="well row">
               <div class="col-xs-6 col-md-6">
                   <h3>First</h3>
@@ -64,7 +64,17 @@
                   <h4>No items selected</h4>
               </div>
           </div>
-      </div> <!-- /container -->
+      </div>
+
+      <div id="about" class="container" role="main" style="display: none">
+        <div class="well row">
+            <h2>About - Photo / Video Uploader</h2>
+            <p>Author: <a href="https://github.com/dmikusa">Daniel Mikusa</a></p>
+            <p>A single page app that can be used as an easy way to upload pictures and videos to a server.</p>
+            <p>The original use case was for an easy way to transfer original images and videos from an iPhone to a server for backup and to free up space on the phone.</p>
+        </div>
+      </div>
+      <!-- /container -->
 
       <!-- Bootstrap core JavaScript -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -76,6 +86,7 @@
                   totalSizeManager.setup($('#total'))
                   uploaderSelector.setup($('#previews'), $('#uploads'), $('#uploadsBtn'), $('#clear'))
                   uploader.setup($('#doUploads'))
+                  pageSelector.setup($('#home'), $('#homeLink'), $('#about'), $('#aboutLink'))
               })
       </script>
   </body>

@@ -231,3 +231,28 @@ var uploaderSelector = (function () {
     setup: setup
   }
 }(jQuery))
+
+var pageSelector = (function () {
+  var setup = function (home, homeLink, about, aboutLink) {
+    homeLink.click(function (e) {
+      about.fadeOut(500, function () {
+        home.fadeIn(500)
+        aboutLink.parent().removeClass('active')
+        homeLink.parent().addClass('active')
+      })
+      e.preventDefault()
+    })
+    aboutLink.click(function (e) {
+      home.fadeOut(500, function () {
+        about.fadeIn(500)
+        homeLink.parent().removeClass('active')
+        aboutLink.parent().addClass('active')
+      })
+      e.preventDefault()
+    })
+  }
+
+  return {
+    setup: setup
+  }
+}(jQuery))
