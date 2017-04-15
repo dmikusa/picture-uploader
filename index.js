@@ -1,4 +1,4 @@
-/* global jQuery, FileReader */
+/* global jQuery, FileReader, location, FormData */
 
 var prettyPrinter = (function () {
   var bytes = function (bytes) {
@@ -43,10 +43,112 @@ var totalSizeManager = (function () {
   }
 }(jQuery))
 
+var uploadProgBar = (function () {
+  var buildProgBar = function (element) {
+    var pb = jQuery('<div class="progress">' +
+                    '<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">' +
+                      '<span class="sr-only">0% Complete</span>' +
+                    '</div>' +
+                  '</div>')
+
+    var activate = function () {
+      element.children().fadeTo(250, 0.25)
+      pb.appendTo(element)
+    }
+
+    var deactivate = function () {
+      pb.remove()
+      element.children().fadeTo(250, 1.0)
+    }
+
+    var updateProg = function (cur) {
+      jQuery('.progress-bar', pb).css('width', cur + '%').attr('aria-valuenow', cur)
+      jQuery('span', pb).text(cur + '% Complete')
+    }
+
+    var failed = function (text) {
+      pb.remove()
+      var msg = jQuery('<div class="alert alert-danger" role="alert">' + text + '</div>')
+      msg.appendTo(element)
+    }
+
+    return {
+      activate: activate,
+      deactivate: deactivate,
+      updateProg: updateProg,
+      failed: failed
+    }
+  }
+
+  return {
+    buildProgBar: buildProgBar
+  }
+}(jQuery))
+
 var uploader = (function () {
+  var URL = location.protocol + '//' + location.host + '/upload'
+
+  var doUploads = function (e) {
+    jQuery('#previews > div').map(function (i, thumbnail) {
+      return jQuery(thumbnail)
+    }).each(function (i, thumbnail) {
+      var form = new FormData()
+      form.append('file', jQuery('span > img', thumbnail)[0].file)
+
+      var pb = uploadProgBar.buildProgBar(thumbnail)
+
+      jQuery.ajax({
+        url: URL,
+        type: 'POST',
+        data: form,
+
+        // tell jQuery not to process data or worry about content type
+        cache: false,
+        contentType: false,
+        processData: false,
+
+        // custom XMLHttpRequest
+        xhr: function () {
+          var req = jQuery.ajaxSettings.xhr()
+          if (req.upload) {
+            req.upload.addEventListener('loadstart', function (e) {
+              pb.activate()
+            })
+
+            req.upload.addEventListener('progress', function (e) {
+              pb.updateProg(e.lengthComputable)
+            })
+
+            req.addEventListener('readystatechange', function (e) {
+              if (req.readyState === 4) {
+                if (req.status >= 400 && req.status < 600) {
+                  pb.failed('Server Error -> Status: ' + req.status)
+                } else {
+                  pb.deactivate()
+                  thumbnail.remove()
+                }
+              }
+            })
+          }
+          return req
+        }
+      })
+    })
+  }
+
+  var setup = function (uploadButton) {
+    uploadButton.click(doUploads)
+  }
+
+  return {
+    setup: setup
+  }
+}(jQuery))
+
+var uploaderSelector = (function () {
   var previews = null
 
-  var handleFiles = function (e) {
+  var handleSelectingFiles = function (e) {
     var files = e.currentTarget.files
 
     // remove no items selected h4
@@ -67,6 +169,7 @@ var uploader = (function () {
         var span = jQuery('<span/>', {'class': 'thumbnail'}).appendTo(div)
         if (f.size < 2097152) {
           var img = jQuery('<img></img>').appendTo(span)
+          img[0].file = f
           var reader = new FileReader()
           reader.onload = (function (imgTag) {
             return function (e) {
@@ -81,7 +184,7 @@ var uploader = (function () {
     }
   }
 
-  var setup = function (previewsPanel, formButton, fancyButton, clearButton) {
+  var setup = function (previewsPanel, formButton, fancyButton, clearButton, doUploadButton) {
     previews = previewsPanel
 
     fancyButton.click(function (e) {
@@ -91,7 +194,7 @@ var uploader = (function () {
       e.preventDefault()
     })
 
-    formButton.change(handleFiles)
+    formButton.change(handleSelectingFiles)
 
     clearButton.click(function (e) {
       previews.children().remove()

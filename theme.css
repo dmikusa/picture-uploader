@@ -11,6 +11,10 @@ input#uploads {
     text-align: center;
 }
 
+#previews > div {
+    position: relative;
+}
+
 #previews > div > h5 {
     display: inline;
     margin-left: 0.5em;
@@ -31,4 +35,11 @@ input#uploads {
 
 .panel-heading > span > button {
     margin-left: 2em;
+}
+
+.progress {
+    width: 80%;
+    top: 45%;
+    left: 10%;
+    position: absolute;
 }
