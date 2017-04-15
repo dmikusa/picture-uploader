@@ -49,6 +49,8 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	os.MkdirAll(uploadDirectory, os.ModePerm)
+
 	http.Handle("/", http.FileServer(http.Dir(".")))
 	// http.Handle("/uploads/", http.StripPrefix("/uploads", http.FileServer(http.Dir(uploadDirectory))))
 	http.HandleFunc("/upload", handleUpload)
