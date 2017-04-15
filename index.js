@@ -137,6 +137,18 @@ var uploader = (function () {
                 }
               }
             })
+
+            req.upload.addEventListener('abort', function (e) {
+              pb.failed('Request aborted!')
+            })
+
+            req.upload.addEventListener('timeout', function (e) {
+              pb.failed('Request timed out!')
+            })
+
+            req.upload.addEventListener('error', function (e) {
+              pb.failed('Unknown Error!')
+            })
           }
           return req
         }
