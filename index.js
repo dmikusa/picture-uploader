@@ -179,7 +179,7 @@ var uploaderSelector = (function () {
       totalSizeManager.increment(f.size)
 
       var div = jQuery('<div></div>', {
-        'class': 'col-xs-2 col-sm-3 col-md-4'
+        'class': 'col-xs-6 col-sm-4 col-md-3'
       })
       .append('<span>' + prettyPrinter.bytes(f.size) + '</span>')
       .append('<h5>' + f.name + '</h5>')
