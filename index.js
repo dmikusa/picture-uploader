@@ -31,6 +31,11 @@ var totalSizeManager = (function () {
     update()
   }
 
+  var decrement = function (bytes) {
+    totalBytes -= bytes
+    update()
+  }
+
   var setup = function (dom) {
     node = dom
     reset()
@@ -39,7 +44,8 @@ var totalSizeManager = (function () {
   return {
     setup: setup,
     reset: reset,
-    increment: increment
+    increment: increment,
+    decrement: decrement
   }
 }(jQuery))
 
@@ -124,6 +130,7 @@ var uploader = (function () {
                 if (req.status >= 400 && req.status < 600) {
                   pb.failed('Server Error -> Status: ' + req.status)
                 } else {
+                  totalSizeManager.decrement(file.size)
                   pb.deactivate()
                   thumbnail.remove()
                 }
