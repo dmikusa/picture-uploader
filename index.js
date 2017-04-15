@@ -175,10 +175,10 @@ var uploaderSelector = (function () {
 
       div[0].file = f
 
+      var span = jQuery('<span/>', {'class': 'thumbnail'}).appendTo(div)
+      var img = jQuery('<img></img>').appendTo(span)
+
       if (/^image\//.test(f.type)) {
-        var span = jQuery('<span/>', {'class': 'thumbnail'}).appendTo(div)
-        var img = jQuery('<img></img>')
-        img.appendTo(span)
         if (f.size < 2097152) {
           var reader = new FileReader()
           reader.onload = (function (imgTag) {
@@ -190,6 +190,8 @@ var uploaderSelector = (function () {
         } else {
           img.attr('src', 'too-large.png')
         }
+      } else {
+        img.attr('src', 'no-preview.png')
       }
     }
   }
