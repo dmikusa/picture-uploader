@@ -6,7 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 const uploadMemoryMax = 10 * 1024 * 1024 // 2M (in bytes)
@@ -41,6 +43,12 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 		}
 		defer f.Close()
 		io.Copy(f, file)
+		// set modified and access time
+		lastModified, err := strconv.ParseInt(r.Form.Get("lastModified"), 10, 64)
+		if err == nil {
+			t := time.Unix(lastModified, 0)
+			os.Chtimes(uploadDirectory+handler.Filename, t, t)
+		}
 		w.WriteHeader(http.StatusCreated)
 		return
 	}

@@ -101,6 +101,7 @@ var uploader = (function () {
       var file = thumbnail[0].file
       var form = new FormData()
       form.append('file', file)
+      form.append('lastModified', file.lastModified/1000.0)
 
       var pb = uploadProgBar.buildProgBar(thumbnail)
 
