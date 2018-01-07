@@ -31,6 +31,11 @@ input#uploads {
 
 .panel-heading > span {
     float: right;
+    margin-left: 2em;
+}
+
+.panel-heading > span > input[type='checkbox'] {
+    margin-right: 0.5em;
 }
 
 .panel-heading > span > button {

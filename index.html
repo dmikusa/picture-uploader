@@ -58,6 +58,7 @@
           <div class="panel panel-default row">
               <div class="panel-heading">
                   <span>Total Upload Size: <span id="total">0 bytes</span><button id="clear" type="button" class="btn btn-xs btn-default">Clear</button></span>
+                  <span><input type="checkbox" id="showPreviews">Show Previews</input></span>
                   <h3 class="panel-title">Uploads</h3>
               </div>
               <div id="previews" class="panel-body">
@@ -84,7 +85,7 @@
           jQuery(document).ready(
               function() {
                   totalSizeManager.setup($('#total'))
-                  uploaderSelector.setup($('#previews'), $('#uploads'), $('#uploadsBtn'), $('#clear'))
+                  uploaderSelector.setup($('#previews'), $('#uploads'), $('#uploadsBtn'), $('#clear'), $('#showPreviews'))
                   uploader.setup($('#doUploads'))
                   pageSelector.setup($('#home'), $('#homeLink'), $('#about'), $('#aboutLink'))
               })
